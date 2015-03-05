@@ -1,0 +1,19 @@
+{
+  "name": "fasti",
+  "version": "0.0.0",
+  "authors": [
+    "Tim Dussinger <tritowntim@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "main": "fasti.js",
+  "dependencies": {
+    "jquery-1.11.2.min": "http://code.jquery.com/jquery-1.11.2.min.js"
+  }
+}
