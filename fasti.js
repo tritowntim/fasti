@@ -1,57 +1,49 @@
 
-
 var $div = $('div');
-
-function print(text) {
-  $div.append('<p>' + text + '</p>');
+function appendElement(name, content) {
+  $div.append('<' + name + '>' + content + '</' + name + '>');
 }
 
-function pre(text) {
-  $div.append('<pre>' + text + '</pre>');
+function p(content) {
+  appendElement('p', content);
+}
+
+function pre(content) {
+  appendElement('pre', content);
 }
 
 function format(text) {
-  var formatted = '';
+  return lpad(text.toString(), CALENDAR_DAY_WIDTH_IN_CHARS);
+}
 
-  switch(text.toString().length) {
-    case 0:
-      formatted = '    ';
-      break;
-    case 1:
-      formatted = '   ' + text.toString();
-      break;
-    case 2:
-      formatted = '  ' + text.toString();
-      break;
+function lpad(text, length) {
+  var formatted = text;
+  while(formatted.length < length) {
+    formatted = ' ' + formatted;
   }
-
-  formatted += ' ';
-
   return formatted;
 }
 
 function centerText(text) {
-  var marginSize = Math.ceil((34 - text.length) / 2);
+  var marginSize = Math.ceil(((CALENDAR_DAY_WIDTH_IN_CHARS * DAY_OF_WEEK_ABBREVIATIONS.length) - text.length) / 2);
 
   var margin = '';
   for(var i = 0; i < marginSize; i++) { margin += ' ' };
 
-  return margin + text;
+  return ' ' + margin + text;
 }
 
-var today = new Date();
-[today.toString(), today.valueOf()].forEach(function(text) { print(text); });
+function formattedHeader() {
+  return DAY_OF_WEEK_ABBREVIATIONS.map(function(letter) { return format(letter) }).join('');
+}
 
-function buildMonth(year, month) {
-
+function daysByWeek(year, month) {
   var weeks = [];
 
   var first = new Date(year, month, 1);
-  var nextMonth = new Date(month < 11 ? year : year + 1, month < 11 ? month + 1 : 0, 1);
-  var last = nextMonth.setDate(nextMonth.getDate() - 1);
+  var last = new Date(month < 11 ? year : year + 1, month < 11 ? month + 1 : 0, 0);
 
   var day = first.getDate();
-
 
   for(var w = 0; w < 6; w++) {
     var week = [];
@@ -69,14 +61,24 @@ function buildMonth(year, month) {
     weeks.push(week);
   }
 
+  return weeks;
+}
+
+function buildMonth(year, month) {
+  var weeks = daysByWeek(year, month);
+
   pre(centerText(MONTHS[month] + ' ' + year));
-  pre('   S    M    T    W    R    F    S')
+  pre(formattedHeader());
+
   weeks.forEach(function(week) {
     pre(week.join(''));
   });
-
 }
+
+var CALENDAR_DAY_WIDTH_IN_CHARS = 5;
+
+var DAY_OF_WEEK_ABBREVIATIONS = ['S', 'M', 'T', 'W', 'R', 'F', 'S'];
 
 var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-MONTHS.forEach(function(month, index) { buildMonth(2016, index) });
+MONTHS.forEach(function(month, index) { buildMonth(2015, index) });
