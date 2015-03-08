@@ -41,35 +41,27 @@ function lastDateInMonth(year, month) {
   return new Date(month < 11 ? year : year + 1, month < 11 ? month + 1 : 0, 0);
 }
 
-function nextDate(date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
-}
-
 function daysByWeek(year, month) {
   var weeks = [];
 
   var first = new Date(year, month, 1);
   var last = lastDateInMonth(year, month);
-  var day = first;
 
-  while (day <= last) {
+  var dates = [];
+  for(var day = first.getDate(); day <= last.getDate(); day++) {
+    dates.push(new Date(year, month, day));
+  }
 
-    var week = [];
+  for(var f = first.getDay() - 1; f >= 0; f--) {
+    dates.unshift(null);
+  }
 
-    for(var f = day.getDay() - 1; f >= 0; f--) {
-      week.push(null);
-    }
+  for(var g = last.getDay(); g < 6; g++) {
+    dates.push(null);
+  }
 
-    while(week.length < 7) {
-      if (day <= last) {
-        week.push(day);
-        day = nextDate(day);
-      } else {
-        week.push(null);
-      }
-    }
-
-    weeks.push(week);
+  for(var i = 0; i <= dates.length; i+=7) {
+    weeks.push(dates.slice(i, i+7));
   }
 
   return weeks;
