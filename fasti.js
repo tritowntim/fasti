@@ -37,24 +37,35 @@ function formattedHeader() {
   return DAY_OF_WEEK_ABBREVIATIONS.map(function(letter) { return format(letter) }).join('');
 }
 
+function lastDateInMonth(year, month) {
+  return new Date(month < 11 ? year : year + 1, month < 11 ? month + 1 : 0, 0);
+}
+
+function nextDate(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+}
+
 function daysByWeek(year, month) {
   var weeks = [];
 
   var first = new Date(year, month, 1);
-  var last = new Date(month < 11 ? year : year + 1, month < 11 ? month + 1 : 0, 0);
+  var last = lastDateInMonth(year, month);
+  var day = first;
 
-  var day = first.getDate();
+  while (day <= last) {
 
-  for(var w = 0; w < 6; w++) {
     var week = [];
 
-    for(var i = 0; i < 7; i++) {
-      var date = new Date(year, month, day);
-      if (date.getMonth() === month && date.getDay() === i) {
-        week.push(format(date.getDate()));
-        day += 1;
+    for(var f = day.getDay() - 1; f >= 0; f--) {
+      week.push(null);
+    }
+
+    while(week.length < 7) {
+      if (day <= last) {
+        week.push(day);
+        day = nextDate(day);
       } else {
-        week.push(format(''));
+        week.push(null);
       }
     }
 
@@ -71,7 +82,8 @@ function buildMonth(year, month) {
   pre(formattedHeader());
 
   weeks.forEach(function(week) {
-    pre(week.join(''));
+    var formatted = week.map(function(day) { return format(day ? day.getDate() : ''); });
+    pre(formatted.join(''));
   });
 }
 
